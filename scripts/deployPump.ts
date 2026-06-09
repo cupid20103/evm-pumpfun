@@ -1,17 +1,19 @@
-import { ethers, network, upgrades } from "hardhat"
-import fs from "fs"
-import hre from "hardhat"
+import { ethers } from "hardhat";
 
 async function main() {
-	console.log("Starting deployments")
-	const routerAddress = "0xfb8e1c3b833f9e67a71c859a132cf783b645e436"
-	const PumpFactoryAddress = "0x44E1c4fcDE5dD693AF979b1fa4E47Eb3E107aCdc";
+	console.log("Starting deployment...");
+
+	// Uniswap V2 (compatible) router on the target network.
+	const routerAddress = process.env.ROUTER_ADDRESS;
+	if (!routerAddress) {
+		throw new Error("Set ROUTER_ADDRESS in your environment before deploying");
+	}
 
 	const PumpFactoryFactory = await ethers.getContractFactory("PumpCloneFactory");
-	// const PumpFactory = await PumpFactoryFactory.deploy(routerAddress) as PumpCloneFactory;
-	// await PumpFactory.waitForDeployment();
-	const PumpFactory = PumpFactoryFactory.attach(PumpFactoryAddress)
-	console.log("This is PumpFactory address: ", await PumpFactory.getAddress())
+	const pumpFactory = await PumpFactoryFactory.deploy(routerAddress);
+	await pumpFactory.waitForDeployment();
+
+	console.log("PumpCloneFactory deployed at:", await pumpFactory.getAddress());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -19,6 +21,6 @@ async function main() {
 main()
 	.then(() => process.exit(0))
 	.catch((error) => {
-		console.error(error)
-		process.exit(1)
-	})
+		console.error(error);
+		process.exit(1);
+	});

@@ -1,15 +1,14 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "@openzeppelin/hardhat-upgrades";
 import "dotenv/config";
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY as string;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     monad: {
       url: "https://testnet-rpc.monad.xyz",
-      accounts: [PRIVATE_KEY],
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
       chainId: 10143,
     },
   },
